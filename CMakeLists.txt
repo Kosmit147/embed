@@ -185,14 +185,15 @@ set(EMBED_HEADER_FILE [=[
 #ifndef BATTERY_EMBED_HPP
 #define BATTERY_EMBED_HPP
 
-#include <vector>
+#include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <span>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
-#include <stdexcept>
-#include <sstream>
-#include <functional>
-#include <cstdint>
-#include <algorithm>
 
 #ifndef __cpp_constexpr_dynamic_alloc
 #   error "battery::embed requires C++20 (Your compiler does not provide __cpp_constexpr_dynamic_alloc, which is needed for battery::embed)"
@@ -220,16 +221,12 @@ namespace b {
 #endif // !B_PRODUCTION_MODE
             {}
 
-            [[nodiscard]] std::string str() const {
-                return m_data.data();
+            [[nodiscard]] std::string_view str() const {
+                return m_data;
             }
 
-            [[nodiscard]] const char* data() const {
-                return m_data.data();
-            }
-
-            [[nodiscard]] std::vector<uint8_t> vec() const {
-                return { m_data.begin(), m_data.end() };
+            [[nodiscard]] std::span<const uint8_t> data() const {
+                return std::span{ reinterpret_cast<const uint8_t*>(m_data.data()), m_data.size() };
             }
 
             [[nodiscard]] size_t length() const {
@@ -240,13 +237,13 @@ namespace b {
                 return m_data.size();
             }
 
-            operator std::string() const {
-                return str();
-            }
+            // operator std::string() const {
+            //     return str();
+            // }
 
-            operator std::vector<uint8_t>() const {
-                return vec();
-            }
+            // operator std::vector<uint8_t>() const {
+            //     return vec();
+            // }
 
             void get(const std::function<void(const b::EmbedInternal::EmbeddedFile&)>& callback);
 
