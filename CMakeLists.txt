@@ -225,8 +225,8 @@ namespace b {
                 return m_data;
             }
 
-            [[nodiscard]] std::span<const uint8_t> data() const {
-                return std::span{ reinterpret_cast<const uint8_t*>(m_data.data()), m_data.size() };
+            [[nodiscard]] std::span<const std::byte> data() const {
+                return std::span{ reinterpret_cast<const std::byte*>(m_data.data()), m_data.size() };
             }
 
             [[nodiscard]] size_t length() const {
@@ -237,14 +237,6 @@ namespace b {
                 return m_data.size();
             }
 
-            // operator std::string() const {
-            //     return str();
-            // }
-
-            // operator std::vector<uint8_t>() const {
-            //     return vec();
-            // }
-
             void get(const std::function<void(const b::EmbedInternal::EmbeddedFile&)>& callback);
 
         private:
@@ -253,10 +245,10 @@ namespace b {
 #ifndef B_PRODUCTION_MODE
             std::string_view m_fullFilepath;
 #endif
-        }; // class EmbeddedFile
+        };
 
         ${EMBEDDED_FILES_DECLARATIONS}
-    };   // struct embedded_files
+    };
 
     template<size_t N>
     struct embed_string_literal {
